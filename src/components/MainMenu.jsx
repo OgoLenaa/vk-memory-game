@@ -26,6 +26,7 @@ const tileStyle = {
 
 export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlockedAchievements, theme, onSelectTheme }) => {
   const [section, setSection] = useState(null);
+  const palette = themes[theme] || themes.amethyst;
   const close = () => setSection(null);
   const sections = [
     ['records', '🏆', 'Рекорды'],
@@ -38,25 +39,25 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
     <div style={{ maxWidth: 420, margin: '0 auto', minHeight: 'min(650px, 75dvh)', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 20 }}>
       <div style={{ fontSize: 68 }}>🧠</div>
       <div>
-        <h1 style={{ color: '#d8c7ff', margin: '0 0 10px' }}>Найди пару</h1>
+        <h1 style={{ color: palette.text, margin: '0 0 10px' }}>Найди пару</h1>
         <p style={{ color: '#b9b1d0', margin: 0 }}>Тренируй память и собирай достижения!</p>
       </div>
       <button type="button" onClick={() => setSection('play')}
         style={{ width: '100%', height: 56, minHeight: 56, flex: '0 0 56px', border: 'none', borderRadius: 16,
-          background: '#8055d9', color: '#fff', fontSize: 18, fontWeight: 800, cursor: 'pointer' }}>
+          background: palette.accent, color: '#fff', fontSize: 18, fontWeight: 800, cursor: 'pointer' }}>
         ▶ Играть
       </button>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 }}>
         {sections.map(([key, icon, title]) => (
-          <button key={key} type="button" onClick={() => setSection(key)} style={tileStyle}>
+          <button key={key} type="button" onClick={() => setSection(key)} style={{ ...tileStyle, background: palette.surface, borderColor: palette.accent }}>
             <span style={{ fontSize: 27 }}>{icon}</span><span>{title}</span>
           </button>
         ))}
       </div>
       {section && (
         <div style={panelStyle}>
-          <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={contentStyle}>
-            <h2 id="menu-section-title" style={{ color: '#d8c7ff', margin: '0 0 20px', textAlign: 'center' }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={{ ...contentStyle, background: palette.surface, borderColor: palette.accent }}>
+            <h2 id="menu-section-title" style={{ color: palette.text, margin: '0 0 20px', textAlign: 'center' }}>
               {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : section === 'themes' ? '🎨 Темы оформления' : '🎖️ Мои достижения'}
             </h2>
             {section === 'play' && (
@@ -65,22 +66,22 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                   {Object.entries(levels).map(([key, item]) => (
                     <button key={key} type="button" onClick={() => onSelectLevel(key)}
                       style={{ padding: 16, borderRadius: 15, textAlign: 'left', cursor: 'pointer', color: '#fff',
-                        border: level === key ? '2px solid #a78bfa' : '1px solid #514477',
-                        background: level === key ? '#493477' : '#241e39' }}>
+                        border: level === key ? `2px solid ${palette.accent}` : `1px solid ${palette.accent}77`,
+                        background: level === key ? palette.accent : palette.surface }}>
                       <div style={{ fontWeight: 700 }}>{item.name}{level === key ? ' ✓' : ''}</div>
                       <div style={{ color: '#b9b1d0', fontSize: 13, marginTop: 5 }}>{item.pairs} пар · {item.pairs * 2} карточек</div>
                     </button>
                   ))}
                 </div>
-                <Button stretched size="l" onClick={onPlay} style={{ marginTop: 18, background: '#8055d9', borderRadius: 14 }}>
+                <Button stretched size="l" onClick={onPlay} style={{ marginTop: 18, background: palette.accent, borderRadius: 14 }}>
                   Начать игру
                 </Button>
               </>
             )}
             {section === 'records' && Object.entries(levels).map(([key, item]) => (
-              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #514477' }}>
+              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: `1px solid ${palette.accent}77` }}>
                 <span>{item.name}</span>
-                <strong style={{ color: '#d8c7ff' }}>{records[key] !== undefined ? formatTime(records[key]) : '—'}</strong>
+                <strong style={{ color: palette.text }}>{records[key] !== undefined ? formatTime(records[key]) : '—'}</strong>
               </div>
             ))}
             {section === 'stats' && (
@@ -91,7 +92,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                     ['ПОБЕД', stats.wins],
                     ['ПРОЦЕНТ ПОБЕД', `${stats.games > 0 ? Math.round(stats.wins / stats.games * 100) : 0}%`],
                   ].map(([label, value]) => (
-                    <div key={label} style={{ background: '#241b38', borderRadius: 12, padding: 12 }}>
+                    <div key={label} style={{ background: palette.surface, borderRadius: 12, padding: 12 }}>
                       <div style={{ color: '#b9b1d0', fontSize: 11 }}>{label}</div>
                       <div style={{ fontSize: 25, fontWeight: 800 }}>{value}</div>
                     </div>
@@ -133,7 +134,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                     const unlocked = unlockedAchievements.includes(item.id);
                     return (
                       <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12,
-                        borderRadius: 12, background: unlocked ? '#403264' : '#1b172c', opacity: unlocked ? 1 : 0.65 }}>
+                        borderRadius: 12, background: unlocked ? palette.accent : palette.surface, opacity: unlocked ? 1 : 0.65 }}>
                         <span style={{ fontSize: 27 }}>{unlocked ? item.icon : '🔒'}</span>
                         <div><strong>{item.title}</strong><div style={{ color: '#b9b1d0', fontSize: 12, marginTop: 4 }}>{item.description}</div></div>
                       </div>
