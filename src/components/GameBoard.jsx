@@ -81,6 +81,7 @@ export const GameBoard = ({
               disabled={isOpen || locked || paused}
               onClick={onCardClick}
               palette={palette}
+              theme={theme}
             />
           );
         })}
