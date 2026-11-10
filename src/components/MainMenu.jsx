@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
 import { achievements, achievementProgress } from '../utils/achievements';
-import { themes } from '../utils/themes';
+import { themes, isThemeUnlocked } from '../utils/themes';
 
 const panelStyle = {
   position: 'fixed', inset: 0, zIndex: 1050,
@@ -115,15 +115,19 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
             {section === 'themes' && (
               <div style={{ display: 'grid', gap: 12 }}>
                 {Object.entries(themes).map(([key, item]) => (
-                  <button key={key} type="button" onClick={() => onSelectTheme(key)}
+                  <button key={key} type="button" disabled={!isThemeUnlocked(key, stats.wins)} onClick={() => onSelectTheme(key)}
                     aria-pressed={theme === key}
                     style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 14,
-                      textAlign: 'left', color: '#fff', cursor: 'pointer', borderRadius: 15,
+                      textAlign: 'left', color: '#fff', cursor: isThemeUnlocked(key, stats.wins) ? 'pointer' : 'not-allowed',
+                      opacity: isThemeUnlocked(key, stats.wins) ? 1 : 0.7, borderRadius: 15,
                       border: theme === key ? `2px solid ${item.accent}` : '1px solid #65538f',
                       background: item.surface }}>
                     <span style={{ fontSize: 30 }}>{item.icon}</span>
                     <span style={{ flex: 1 }}><strong>{item.name}</strong>
                       <span style={{ display: 'block', fontSize: 12, marginTop: 5, color: item.text }}>{item.description}</span>
+                      {!isThemeUnlocked(key, stats.wins) && <span style={{ display: 'block', fontSize: 12, marginTop: 6, color: '#fff' }}>
+                        🔒 Откроется после {item.requiredWins} побед · {Math.min(stats.wins, item.requiredWins)} / {item.requiredWins}
+                      </span>}
                     </span>
                     {theme === key && <span aria-label="Выбрана">✓</span>}
                   </button>
