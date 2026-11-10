@@ -37,7 +37,7 @@ export const Home = ({ id }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
     const saved = readStored('memoryGameAchievements', () => []);
     const previousStats = readStored('memoryGameStats', defaultStats);
-    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward'), {
+    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
       wins: previousStats.wins || 0,
       level: null,
       moves: null,
