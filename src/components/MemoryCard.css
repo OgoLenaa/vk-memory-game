@@ -55,6 +55,28 @@
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.08);
 }
 
+.memory-card--ocean .memory-card__back {
+  background: radial-gradient(circle at 22% 20%, rgba(177, 244, 239, 0.23) 0 6%, transparent 7%),
+    radial-gradient(circle at 75% 72%, rgba(177, 244, 239, 0.18) 0 8%, transparent 9%),
+    linear-gradient(145deg, #218e8b, #123039);
+  color: #d2fffa;
+  text-shadow: 0 0 14px rgba(180, 255, 248, 0.6);
+}
+
+.memory-card--sunset .memory-card__back {
+  background: radial-gradient(circle at 50% 95%, rgba(255, 211, 129, 0.34), transparent 60%),
+    linear-gradient(145deg, #c47740, #4a3026);
+  color: #ffe2a5;
+  text-shadow: 0 0 14px rgba(255, 220, 160, 0.55);
+}
+
+.memory-card--amethyst .memory-card__back {
+  background: radial-gradient(circle at 50% 50%, rgba(217, 190, 255, 0.18), transparent 65%),
+    linear-gradient(145deg, var(--card-accent, #8055d9), var(--card-surface, #241b38));
+  color: #efe0ff;
+  text-shadow: 0 0 12px rgba(230, 205, 255, 0.45);
+}
+
 .memory-card__front {
   transform: rotateY(180deg);
   border: 2px solid var(--card-text, #c4b5fd);
