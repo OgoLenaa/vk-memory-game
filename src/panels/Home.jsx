@@ -37,7 +37,7 @@ export const Home = ({ id }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
     const saved = readStored('memoryGameAchievements', () => []);
     const previousStats = readStored('memoryGameStats', defaultStats);
-    return earnedAchievements(Array.isArray(saved) ? saved : [], {
+    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward'), {
       wins: previousStats.wins || 0,
       level: null,
       moves: null,
@@ -139,7 +139,7 @@ export const Home = ({ id }) => {
       achievementSoundTimer.current = setTimeout(() => {
         playSound('achievement');
         achievementSoundTimer.current = null;
-      }, 850);
+      }, 400);
     }
     setUnlockedAchievements(nextAchievements);
     localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
