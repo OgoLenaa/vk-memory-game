@@ -20,7 +20,7 @@ export const Home = ({ id }) => {
   };
 
   // Current game
-  const [cards, setCards] = useState(() => createCards('medium'));
+  const [cards, setCards] = useState(() => createCards('medium', readTheme()));
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -67,7 +67,7 @@ export const Home = ({ id }) => {
   const startGame = (selectedLevel = level) => {
     clearTimeout(achievementSoundTimer.current);
     setLevel(selectedLevel);
-    setCards(createCards(selectedLevel));
+    setCards(createCards(selectedLevel, theme));
     setSelected([]);
     setMatched([]);
     setMoves(0);
