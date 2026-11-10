@@ -4,8 +4,29 @@ import { achievements } from '../utils/achievements';
 
 export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements = [] }) => (
   <div
+    role="presentation"
     style={{
-      marginTop: 25,
+      position: 'fixed',
+      inset: 0,
+      zIndex: 1100,
+      background: 'rgba(7, 5, 18, 0.82)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      boxSizing: 'border-box',
+    }}
+  >
+  <div
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="win-title"
+    style={{
+      width: '100%',
+      maxWidth: 390,
+      maxHeight: 'calc(100dvh - 32px)',
+      overflowY: 'auto',
+      boxSizing: 'border-box',
       padding: 25,
       background: 'linear-gradient(145deg, #3d2d60, #29203f)',
       border: '1px solid #8065b5',
@@ -15,7 +36,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
     }}
   >
     <div style={{ fontSize: 55, marginBottom: 10 }}>🏆</div>
-    <h2 style={{ color: '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
+    <h2 id="win-title" style={{ color: '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
     <p style={{ color: '#c8bddf', marginBottom: 22 }}>
       Все пары найдены! Отличная работа!
     </p>
@@ -76,5 +97,6 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
         Играть ещё раз
       </Button>
     </div>
+  </div>
   </div>
 );
