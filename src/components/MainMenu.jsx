@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
-import { achievements } from '../utils/achievements';
+import { achievements, achievementProgress } from '../utils/achievements';
 import { themes } from '../utils/themes';
 
 const panelStyle = {
@@ -132,11 +132,21 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                 <div style={{ display: 'grid', gap: 10 }}>
                   {achievements.map((item) => {
                     const unlocked = unlockedAchievements.includes(item.id);
+                    const progress = achievementProgress(item.id, stats);
                     return (
                       <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12,
                         borderRadius: 12, background: unlocked ? palette.accent : palette.surface, opacity: unlocked ? 1 : 0.65 }}>
                         <span style={{ fontSize: 27 }}>{unlocked ? item.icon : '🔒'}</span>
-                        <div><strong>{item.title}</strong><div style={{ color: '#b9b1d0', fontSize: 12, marginTop: 4 }}>{item.description}</div></div>
+                        <div style={{ flex: 1, minWidth: 0 }}><strong>{item.title}</strong><div style={{ color: '#b9b1d0', fontSize: 12, marginTop: 4 }}>{item.description}</div>
+                          {progress && <div style={{ marginTop: 8 }}>
+                            <div style={{ color: palette.text, fontSize: 12, marginBottom: 4 }}>{progress.current} / {progress.target}</div>
+                            <div role="progressbar" aria-valuemin={0} aria-valuemax={progress.target} aria-valuenow={progress.current}
+                              aria-label={`Прогресс: ${item.title}`}
+                              style={{ height: 7, borderRadius: 8, background: '#ffffff30', overflow: 'hidden' }}>
+                              <div style={{ width: `${100 * progress.current / progress.target}%`, height: '100%', borderRadius: 8, background: palette.text }} />
+                            </div>
+                          </div>}
+                        </div>
                       </div>
                     );
                   })}
