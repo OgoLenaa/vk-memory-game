@@ -39,10 +39,11 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
         <h1 style={{ color: '#d8c7ff', margin: '0 0 10px' }}>Найди пару</h1>
         <p style={{ color: '#b9b1d0', margin: 0 }}>Тренируй память и собирай достижения!</p>
       </div>
-      <Button stretched size="l" onClick={() => setSection('play')}
-        style={{ height: 58, borderRadius: 16, background: '#8055d9', fontWeight: 800 }}>
+      <button type="button" onClick={() => setSection('play')}
+        style={{ width: '100%', height: 56, minHeight: 56, flex: '0 0 56px', border: 'none', borderRadius: 16,
+          background: '#8055d9', color: '#fff', fontSize: 18, fontWeight: 800, cursor: 'pointer' }}>
         ▶ Играть
-      </Button>
+      </button>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
         {sections.map(([key, icon, title]) => (
           <button key={key} type="button" onClick={() => setSection(key)} style={tileStyle}>
