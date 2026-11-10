@@ -7,12 +7,15 @@ import { themes, isThemeUnlocked } from '../utils/themes';
 const panelStyle = {
   position: 'fixed', inset: 0, zIndex: 1050,
   background: 'rgba(7, 5, 18, 0.82)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  padding: 16, boxSizing: 'border-box',
+  display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+  overflowY: 'auto', overscrollBehaviorY: 'contain',
+  WebkitOverflowScrolling: 'touch', touchAction: 'pan-y',
+  padding: 'calc(env(safe-area-inset-top, 0px) + 84px) 16px calc(env(safe-area-inset-bottom, 0px) + 20px)',
+  boxSizing: 'border-box',
 };
 const contentStyle = {
-  width: '100%', maxWidth: 420, maxHeight: 'calc(100dvh - 32px)',
-  overflowY: 'auto', boxSizing: 'border-box', padding: 24,
+  width: '100%', maxWidth: 420, flexShrink: 0,
+  boxSizing: 'border-box', padding: 24,
   borderRadius: 22, border: '1px solid #8065b5',
   background: 'linear-gradient(145deg, #3d2d60, #241b38)',
   boxShadow: '0 12px 35px rgba(0,0,0,0.4)', color: '#fff',
@@ -57,12 +60,12 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
       {section && (
         <div style={panelStyle}>
           <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={{ ...contentStyle, background: palette.surface, borderColor: palette.accent }}>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 36, marginBottom: 20, paddingRight: 36, paddingLeft: 36 }}>
+            <div style={{ position: 'sticky', top: -24, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 44, marginBottom: 20, padding: '8px 44px', background: palette.surface, borderRadius: 12 }}>
               <h2 id="menu-section-title" style={{ color: palette.text, margin: 0, textAlign: 'center' }}>
               {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : section === 'themes' ? '🎨 Темы оформления' : '🎖️ Мои достижения'}
               </h2>
               <button type="button" onClick={close} aria-label="Закрыть окно"
-                style={{ position: 'absolute', right: 0, top: 0, width: 36, height: 36, border: 'none',
+                style={{ position: 'absolute', right: 4, top: 4, width: 40, height: 40, border: 'none',
                   borderRadius: 10, background: 'rgba(255,255,255,0.10)', color: '#fff',
                   fontSize: 26, lineHeight: '36px', cursor: 'pointer' }}>×</button>
             </div>
