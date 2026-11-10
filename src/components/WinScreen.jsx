@@ -36,7 +36,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
     }}
   >
     <div style={{ fontSize: 55, marginBottom: 10 }}>🏆</div>
-    <h2 id="win-title" style={{ color: palette?.text || '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
+    <h2 id="win-title" style={{ color: palette?.text || '#d8c7ff', margin: '5px 0 10px' }}>Победа!</h2>
     <p style={{ color: '#c8bddf', marginBottom: 22 }}>
       Все пары найдены! Отличная работа!
     </p>
