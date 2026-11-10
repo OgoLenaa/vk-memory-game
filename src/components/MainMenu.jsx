@@ -104,10 +104,10 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                     </div>
                   ))}
                 </div>
-                <h3 style={{ marginBottom: 8 }}>Игры по уровням</h3>
+                <h3 style={{ marginBottom: 8 }}>Игры и победы по уровням</h3>
                 {Object.entries(levels).map(([key, item]) => (
                   <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-                    <span>{item.name}</span><strong>{stats.levels[key] || 0}</strong>
+                    <span>{item.name}</span><strong>{stats.levels[key] || 0} игр · {stats.winsByLevel?.[key] || 0} побед</strong>
                   </div>
                 ))}
               </>
