@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Panel, PanelHeader } from '@vkontakte/vkui';
 import { MainMenu } from '../components/MainMenu';
 import { GameBoard } from '../components/GameBoard';
@@ -22,6 +22,9 @@ export const Home = ({ id }) => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [paused, setPaused] = useState(false);
   const [newAchievements, setNewAchievements] = useState([]);
+  const achievementSoundTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(achievementSoundTimer.current), []);
 
   // Saved records and statistics (same storage keys as before)
   const [records, setRecords] = useState(() =>
@@ -47,6 +50,7 @@ export const Home = ({ id }) => {
   }, [unlockedAchievements]);
 
   const startGame = (selectedLevel = level) => {
+    clearTimeout(achievementSoundTimer.current);
     setLevel(selectedLevel);
     setCards(createCards(selectedLevel));
     setSelected([]);
@@ -131,7 +135,12 @@ export const Home = ({ id }) => {
     });
     const newlyEarned = nextAchievements.filter((id) => !unlockedAchievements.includes(id));
     setNewAchievements(newlyEarned);
-    if (soundEnabled && newlyEarned.length > 0) playSound('achievement');
+    if (soundEnabled && newlyEarned.length > 0) {
+      achievementSoundTimer.current = setTimeout(() => {
+        playSound('achievement');
+        achievementSoundTimer.current = null;
+      }, 850);
+    }
     setUnlockedAchievements(nextAchievements);
     localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
   }, [isWon]);
@@ -185,6 +194,7 @@ export const Home = ({ id }) => {
             onCardClick={handleCardClick}
             onRestart={() => startGame()}
             onHome={() => {
+              clearTimeout(achievementSoundTimer.current);
               setPaused(false);
               setStarted(false);
             }}
