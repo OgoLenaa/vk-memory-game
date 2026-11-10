@@ -19,6 +19,7 @@ export const Home = ({ id }) => {
   const [locked, setLocked] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   // Saved records and statistics (same storage keys as before)
   const [records, setRecords] = useState(() =>
@@ -36,6 +37,7 @@ export const Home = ({ id }) => {
     setMoves(0);
     setElapsed(0);
     setTimerStarted(false);
+    setPaused(false);
     setLocked(false);
     setStarted(true);
 
@@ -53,7 +55,7 @@ export const Home = ({ id }) => {
   };
 
   const handleCardClick = (card) => {
-    if (locked || selected.includes(card.id) || matched.includes(card.symbol)) {
+    if (paused || locked || selected.includes(card.id) || matched.includes(card.symbol)) {
       return;
     }
 
@@ -107,14 +109,14 @@ export const Home = ({ id }) => {
 
   // Timer starts only after the first card flip
   useEffect(() => {
-    if (!started || !timerStarted || isWon) return;
+    if (!started || !timerStarted || isWon || paused) return;
 
     const timer = setInterval(() => {
       setElapsed((previous) => previous + 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [started, timerStarted, isWon]);
+  }, [started, timerStarted, isWon, paused]);
 
   return (
     <Panel id={id}>
@@ -145,10 +147,16 @@ export const Home = ({ id }) => {
             moves={moves}
             elapsed={elapsed}
             locked={locked}
+            paused={paused}
+            onPause={() => setPaused(true)}
+            onResume={() => setPaused(false)}
             isWon={isWon}
             onCardClick={handleCardClick}
             onRestart={() => startGame()}
-            onHome={() => setStarted(false)}
+            onHome={() => {
+              setPaused(false);
+              setStarted(false);
+            }}
             soundEnabled={soundEnabled}
             onToggleSound={() => setSoundEnabled((previous) => !previous)}
           />

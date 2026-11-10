@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
 import { WinScreen } from './WinScreen';
@@ -6,11 +5,9 @@ import { GameMenu } from './GameMenu';
 import { MemoryCard } from './MemoryCard';
 
 export const GameBoard = ({
-  level, cards, selected, matched, moves, elapsed, locked, isWon,
+  level, cards, selected, matched, moves, elapsed, locked, paused, onPause, onResume, isWon,
   onCardClick, onRestart, onHome, soundEnabled, onToggleSound,
 }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <div style={{ maxWidth: 450, margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: 22 }}>
@@ -21,7 +18,7 @@ export const GameBoard = ({
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 15 }}>
-        <Button size="s" mode="secondary" onClick={() => setMenuOpen(true)}>
+        <Button size="s" mode="secondary" onClick={onPause}>
           ☰ Меню
         </Button>
       </div>
@@ -71,7 +68,7 @@ export const GameBoard = ({
               card={card}
               isOpen={isOpen}
               isMatched={isMatched}
-              disabled={isOpen || locked}
+              disabled={isOpen || locked || paused}
               onClick={onCardClick}
             />
           );
@@ -82,11 +79,10 @@ export const GameBoard = ({
         <WinScreen moves={moves} elapsed={elapsed} onHome={onHome} onRestart={onRestart} />
       )}
 
-      {menuOpen && (
+      {paused && (
         <GameMenu
-          onClose={() => setMenuOpen(false)}
+          onClose={onResume}
           onHome={() => {
-            setMenuOpen(false);
             onHome();
           }}
           soundEnabled={soundEnabled}

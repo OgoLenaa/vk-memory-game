@@ -34,7 +34,7 @@ export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
           marginBottom: 22,
         }}
       >
-        <h2 style={{ color: '#d8c7ff', margin: 0 }}>Меню игры</h2>
+        <h2 style={{ color: '#d8c7ff', margin: 0 }}>Пауза</h2>
         <button
           onClick={onClose}
           style={{
@@ -48,6 +48,16 @@ export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
           ×
         </button>
       </div>
+
+      <Button
+        stretched
+        size="l"
+        mode="primary"
+        onClick={onClose}
+        style={{ marginBottom: 14 }}
+      >
+        ▶ Продолжить игру
+      </Button>
 
       <Button
         stretched
