@@ -36,6 +36,7 @@ export const formatTime = (seconds) => {
 export const defaultStats = () => ({
   games: 0,
   wins: 0,
+  winsByLevel: { easy: 0, medium: 0, hard: 0 },
   levels: { easy: 0, medium: 0, hard: 0 },
 });
 
