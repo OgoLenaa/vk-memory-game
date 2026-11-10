@@ -57,9 +57,15 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
       {section && (
         <div style={panelStyle}>
           <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={{ ...contentStyle, background: palette.surface, borderColor: palette.accent }}>
-            <h2 id="menu-section-title" style={{ color: palette.text, margin: '0 0 20px', textAlign: 'center' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 36, marginBottom: 20, paddingRight: 36, paddingLeft: 36 }}>
+              <h2 id="menu-section-title" style={{ color: palette.text, margin: 0, textAlign: 'center' }}>
               {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : section === 'themes' ? '🎨 Темы оформления' : '🎖️ Мои достижения'}
-            </h2>
+              </h2>
+              <button type="button" onClick={close} aria-label="Закрыть окно"
+                style={{ position: 'absolute', right: 0, top: 0, width: 36, height: 36, border: 'none',
+                  borderRadius: 10, background: 'rgba(255,255,255,0.10)', color: '#fff',
+                  fontSize: 26, lineHeight: '36px', cursor: 'pointer' }}>×</button>
+            </div>
             {section === 'play' && (
               <>
                 <div style={{ display: 'grid', gap: 12 }}>
@@ -153,9 +159,6 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                 </div>
               </>
             )}
-            <Button stretched size="l" mode="secondary" onClick={close} style={{ marginTop: 20, borderRadius: 14 }}>
-              ← Назад
-            </Button>
           </div>
         </div>
       )}
