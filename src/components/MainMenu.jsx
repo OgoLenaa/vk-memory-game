@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
 import { achievements } from '../utils/achievements';
+import { themes } from '../utils/themes';
 
 const panelStyle = {
   position: 'fixed', inset: 0, zIndex: 1050,
@@ -23,13 +24,14 @@ const tileStyle = {
   justifyItems: 'center', fontSize: 14, fontWeight: 700,
 };
 
-export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlockedAchievements }) => {
+export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlockedAchievements, theme, onSelectTheme }) => {
   const [section, setSection] = useState(null);
   const close = () => setSection(null);
   const sections = [
     ['records', '🏆', 'Рекорды'],
     ['stats', '📊', 'Статистика'],
     ['achievements', '🎖️', 'Награды'],
+    ['themes', '🎨', 'Темы'],
   ];
 
   return (
@@ -44,7 +46,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
           background: '#8055d9', color: '#fff', fontSize: 18, fontWeight: 800, cursor: 'pointer' }}>
         ▶ Играть
       </button>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 }}>
         {sections.map(([key, icon, title]) => (
           <button key={key} type="button" onClick={() => setSection(key)} style={tileStyle}>
             <span style={{ fontSize: 27 }}>{icon}</span><span>{title}</span>
@@ -55,7 +57,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
         <div style={panelStyle}>
           <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={contentStyle}>
             <h2 id="menu-section-title" style={{ color: '#d8c7ff', margin: '0 0 20px', textAlign: 'center' }}>
-              {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : '🎖️ Мои достижения'}
+              {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : section === 'themes' ? '🎨 Темы оформления' : '🎖️ Мои достижения'}
             </h2>
             {section === 'play' && (
               <>
@@ -102,6 +104,24 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                   </div>
                 ))}
               </>
+            )}
+            {section === 'themes' && (
+              <div style={{ display: 'grid', gap: 12 }}>
+                {Object.entries(themes).map(([key, item]) => (
+                  <button key={key} type="button" onClick={() => onSelectTheme(key)}
+                    aria-pressed={theme === key}
+                    style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 14,
+                      textAlign: 'left', color: '#fff', cursor: 'pointer', borderRadius: 15,
+                      border: theme === key ? `2px solid ${item.accent}` : '1px solid #65538f',
+                      background: item.surface }}>
+                    <span style={{ fontSize: 30 }}>{item.icon}</span>
+                    <span style={{ flex: 1 }}><strong>{item.name}</strong>
+                      <span style={{ display: 'block', fontSize: 12, marginTop: 5, color: item.text }}>{item.description}</span>
+                    </span>
+                    {theme === key && <span aria-label="Выбрана">✓</span>}
+                  </button>
+                ))}
+              </div>
             )}
             {section === 'achievements' && (
               <>
