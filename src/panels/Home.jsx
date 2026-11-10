@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Panel, PanelHeader } from '@vkontakte/vkui';
+import { useEffect, useRef, useState } from 'react';
+import { Panel } from '@vkontakte/vkui';
 import { MainMenu } from '../components/MainMenu';
 import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
 import { playSound } from '../utils/sounds';
+import { earnedAchievements } from '../utils/achievements';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
@@ -20,6 +21,10 @@ export const Home = ({ id }) => {
   const [elapsed, setElapsed] = useState(0);
   const [timerStarted, setTimerStarted] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [newAchievements, setNewAchievements] = useState([]);
+  const achievementSoundTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(achievementSoundTimer.current), []);
 
   // Saved records and statistics (same storage keys as before)
   const [records, setRecords] = useState(() =>
@@ -29,7 +34,23 @@ export const Home = ({ id }) => {
     readStored('memoryGameStats', defaultStats)
   );
 
+  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
+    const saved = readStored('memoryGameAchievements', () => []);
+    const previousStats = readStored('memoryGameStats', defaultStats);
+    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
+      wins: previousStats.wins || 0,
+      level: null,
+      moves: null,
+    });
+  });
+
+  // Award milestones from existing statistics, even before the next game.
+  useEffect(() => {
+    localStorage.setItem('memoryGameAchievements', JSON.stringify(unlockedAchievements));
+  }, [unlockedAchievements]);
+
   const startGame = (selectedLevel = level) => {
+    clearTimeout(achievementSoundTimer.current);
     setLevel(selectedLevel);
     setCards(createCards(selectedLevel));
     setSelected([]);
@@ -38,6 +59,7 @@ export const Home = ({ id }) => {
     setElapsed(0);
     setTimerStarted(false);
     setPaused(false);
+    setNewAchievements([]);
     setLocked(false);
     setStarted(true);
 
@@ -105,6 +127,22 @@ export const Home = ({ id }) => {
     const updatedStats = { ...stats, wins: stats.wins + 1 };
     setStats(updatedStats);
     localStorage.setItem('memoryGameStats', JSON.stringify(updatedStats));
+
+    const nextAchievements = earnedAchievements(unlockedAchievements, {
+      wins: updatedStats.wins,
+      level,
+      moves,
+    });
+    const newlyEarned = nextAchievements.filter((id) => !unlockedAchievements.includes(id));
+    setNewAchievements(newlyEarned);
+    if (soundEnabled && newlyEarned.length > 0) {
+      achievementSoundTimer.current = setTimeout(() => {
+        playSound('achievement');
+        achievementSoundTimer.current = null;
+      }, 400);
+    }
+    setUnlockedAchievements(nextAchievements);
+    localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
   }, [isWon]);
 
   // Timer starts only after the first card flip
@@ -120,11 +158,13 @@ export const Home = ({ id }) => {
 
   return (
     <Panel id={id}>
-      <PanelHeader>Найди пару</PanelHeader>
       <div
         style={{
-          minHeight: '85vh',
-          padding: '24px 16px',
+          minHeight: '100dvh',
+          padding: 'clamp(10px, 2vh, 20px) 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           background: 'linear-gradient(160deg, #171329, #0e0b19)',
           color: '#ffffff',
           boxSizing: 'border-box',
@@ -137,6 +177,7 @@ export const Home = ({ id }) => {
             onPlay={() => startGame()}
             records={records}
             stats={stats}
+            unlockedAchievements={unlockedAchievements}
           />
         ) : (
           <GameBoard
@@ -151,9 +192,11 @@ export const Home = ({ id }) => {
             onPause={() => setPaused(true)}
             onResume={() => setPaused(false)}
             isWon={isWon}
+            newAchievements={newAchievements}
             onCardClick={handleCardClick}
             onRestart={() => startGame()}
             onHome={() => {
+              clearTimeout(achievementSoundTimer.current);
               setPaused(false);
               setStarted(false);
             }}

@@ -1,10 +1,32 @@
 import { Button } from '@vkontakte/vkui';
 import { formatTime } from '../utils/memoryGame';
+import { achievements } from '../utils/achievements';
 
-export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
+export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements = [] }) => (
   <div
+    role="presentation"
     style={{
-      marginTop: 25,
+      position: 'fixed',
+      inset: 0,
+      zIndex: 1100,
+      background: 'rgba(7, 5, 18, 0.82)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      boxSizing: 'border-box',
+    }}
+  >
+  <div
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="win-title"
+    style={{
+      width: '100%',
+      maxWidth: 390,
+      maxHeight: 'calc(100dvh - 32px)',
+      overflowY: 'auto',
+      boxSizing: 'border-box',
       padding: 25,
       background: 'linear-gradient(145deg, #3d2d60, #29203f)',
       border: '1px solid #8065b5',
@@ -14,7 +36,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
     }}
   >
     <div style={{ fontSize: 55, marginBottom: 10 }}>🏆</div>
-    <h2 style={{ color: '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
+    <h2 id="win-title" style={{ color: '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
     <p style={{ color: '#c8bddf', marginBottom: 22 }}>
       Все пары найдены! Отличная работа!
     </p>
@@ -37,6 +59,19 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
         </div>
       ))}
     </div>
+
+    {newAchievements.length > 0 && (
+      <div style={{ marginBottom: 22, padding: 16, borderRadius: 16, background: '#463365', border: '1px solid #a78bfa' }} aria-live="polite">
+        <div style={{ fontWeight: 800, color: '#e7d9ff', marginBottom: 12 }}>Новое достижение!</div>
+        {achievements.filter((item) => newAchievements.includes(item.id)).map((item) => (
+          <div key={item.id} style={{ marginTop: 10 }}>
+            <div style={{ fontSize: 32 }}>{item.icon}</div>
+            <div style={{ fontWeight: 700, color: '#fff' }}>{item.title}</div>
+            <div style={{ color: '#c8bddf', fontSize: 13 }}>{item.description}</div>
+          </div>
+        ))}
+      </div>
+    )}
 
     <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
       <Button
@@ -62,5 +97,6 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
         Играть ещё раз
       </Button>
     </div>
+  </div>
   </div>
 );
