@@ -54,6 +54,7 @@ export const Home = ({ id }) => {
     const previousStats = readStored('memoryGameStats', defaultStats);
     return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
       wins: previousStats.wins || 0,
+      hardWins: previousStats.winsByLevel?.hard || 0,
       level: null,
       moves: null,
     });
@@ -139,12 +140,22 @@ export const Home = ({ id }) => {
       localStorage.setItem('memoryGameRecords', JSON.stringify(updatedRecords));
     }
 
-    const updatedStats = { ...stats, wins: stats.wins + 1 };
+    const updatedStats = {
+      ...stats,
+      wins: stats.wins + 1,
+      winsByLevel: {
+        easy: stats.winsByLevel?.easy || 0,
+        medium: stats.winsByLevel?.medium || 0,
+        hard: stats.winsByLevel?.hard || 0,
+        [level]: (stats.winsByLevel?.[level] || 0) + 1,
+      },
+    };
     setStats(updatedStats);
     localStorage.setItem('memoryGameStats', JSON.stringify(updatedStats));
 
     const nextAchievements = earnedAchievements(unlockedAchievements, {
       wins: updatedStats.wins,
+      hardWins: updatedStats.winsByLevel.hard,
       level,
       moves,
     });
