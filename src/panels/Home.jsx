@@ -30,9 +30,20 @@ export const Home = ({ id }) => {
     readStored('memoryGameStats', defaultStats)
   );
 
-  const [unlockedAchievements, setUnlockedAchievements] = useState(() =>
-    readStored('memoryGameAchievements', () => [])
-  );
+  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
+    const saved = readStored('memoryGameAchievements', () => []);
+    const previousStats = readStored('memoryGameStats', defaultStats);
+    return earnedAchievements(Array.isArray(saved) ? saved : [], {
+      wins: previousStats.wins || 0,
+      level: null,
+      moves: null,
+    });
+  });
+
+  // Award milestones from existing statistics, even before the next game.
+  useEffect(() => {
+    localStorage.setItem('memoryGameAchievements', JSON.stringify(unlockedAchievements));
+  }, [unlockedAchievements]);
 
   const startGame = (selectedLevel = level) => {
     setLevel(selectedLevel);
