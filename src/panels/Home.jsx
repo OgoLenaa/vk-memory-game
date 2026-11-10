@@ -21,6 +21,7 @@ export const Home = ({ id }) => {
   const [elapsed, setElapsed] = useState(0);
   const [timerStarted, setTimerStarted] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [newAchievements, setNewAchievements] = useState([]);
 
   // Saved records and statistics (same storage keys as before)
   const [records, setRecords] = useState(() =>
@@ -54,6 +55,7 @@ export const Home = ({ id }) => {
     setElapsed(0);
     setTimerStarted(false);
     setPaused(false);
+    setNewAchievements([]);
     setLocked(false);
     setStarted(true);
 
@@ -127,6 +129,7 @@ export const Home = ({ id }) => {
       level,
       moves,
     });
+    setNewAchievements(nextAchievements.filter((id) => !unlockedAchievements.includes(id)));
     setUnlockedAchievements(nextAchievements);
     localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
   }, [isWon]);
@@ -176,6 +179,7 @@ export const Home = ({ id }) => {
             onPause={() => setPaused(true)}
             onResume={() => setPaused(false)}
             isWon={isWon}
+            newAchievements={newAchievements}
             onCardClick={handleCardClick}
             onRestart={() => startGame()}
             onHome={() => {
