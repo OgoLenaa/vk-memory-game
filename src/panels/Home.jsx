@@ -129,7 +129,9 @@ export const Home = ({ id }) => {
       level,
       moves,
     });
-    setNewAchievements(nextAchievements.filter((id) => !unlockedAchievements.includes(id)));
+    const newlyEarned = nextAchievements.filter((id) => !unlockedAchievements.includes(id));
+    setNewAchievements(newlyEarned);
+    if (soundEnabled && newlyEarned.length > 0) playSound('achievement');
     setUnlockedAchievements(nextAchievements);
     localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
   }, [isWon]);
