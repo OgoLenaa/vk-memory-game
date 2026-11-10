@@ -3,30 +3,7 @@ import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
 import { WinScreen } from './WinScreen';
 import { GameMenu } from './GameMenu';
-
-const cardStyle = (isOpen, isMatched) => ({
-  width: '100%',
-  aspectRatio: '1 / 1',
-  borderRadius: 18,
-  border: isMatched
-    ? '2px solid #8fcaad'
-    : isOpen ? '2px solid #c4b5fd' : '1px solid #65538f',
-  background: isMatched
-    ? 'linear-gradient(145deg, #365b50, #28463d)'
-    : isOpen
-      ? 'linear-gradient(145deg, #9470ed, #6343b5)'
-      : 'linear-gradient(145deg, #403264, #241b3d)',
-  color: '#ffffff',
-  fontSize: 'clamp(24px, 7vw, 38px)',
-  fontWeight: 700,
-  cursor: 'pointer',
-  boxShadow: isOpen
-    ? '0 4px 10px rgba(0,0,0,0.2)'
-    : '0 5px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.08)',
-  transition: 'all 0.2s ease',
-  transform: isOpen ? 'scale(0.97)' : 'scale(1)',
-  opacity: isMatched ? 0.85 : 1,
-});
+import { MemoryCard } from './MemoryCard';
 
 export const GameBoard = ({
   level, cards, selected, matched, moves, elapsed, locked, isWon,
@@ -89,14 +66,14 @@ export const GameBoard = ({
           const isOpen = selected.includes(card.id) || isMatched;
 
           return (
-            <button
+            <MemoryCard
               key={card.id}
-              onClick={() => onCardClick(card)}
+              card={card}
+              isOpen={isOpen}
+              isMatched={isMatched}
               disabled={isOpen || locked}
-              style={cardStyle(isOpen, isMatched)}
-            >
-              {isOpen ? card.symbol : '✦'}
-            </button>
+              onClick={onCardClick}
+            />
           );
         })}
       </div>
