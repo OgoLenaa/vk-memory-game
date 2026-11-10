@@ -5,12 +5,19 @@ import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
 import { playSound } from '../utils/sounds';
 import { earnedAchievements } from '../utils/achievements';
+import { themes, readTheme, THEME_STORAGE_KEY } from '../utils/themes';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
   const [started, setStarted] = useState(false);
   const [level, setLevel] = useState('medium');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [theme, setTheme] = useState(readTheme);
+  const selectTheme = (nextTheme) => {
+    if (!themes[nextTheme]) return;
+    setTheme(nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  };
 
   // Current game
   const [cards, setCards] = useState(() => createCards('medium'));
@@ -165,7 +172,7 @@ export const Home = ({ id }) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: 'linear-gradient(160deg, #171329, #0e0b19)',
+          background: themes[theme].background,
           color: '#ffffff',
           boxSizing: 'border-box',
         }}
@@ -178,6 +185,8 @@ export const Home = ({ id }) => {
             records={records}
             stats={stats}
             unlockedAchievements={unlockedAchievements}
+            theme={theme}
+            onSelectTheme={selectTheme}
           />
         ) : (
           <GameBoard
