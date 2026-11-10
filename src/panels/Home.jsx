@@ -42,6 +42,30 @@ export const Home = ({ id }) => {
     readStored('memoryGameStats', defaultStats)
   );
 
+  // Previously selected themes stay saved, but locked themes cannot be used.
+  useEffect(() => {
+    if (!isThemeUnlocked(theme, stats.wins)) {
+      setTheme('amethyst');
+      localStorage.setItem(THEME_STORAGE_KEY, 'amethyst');
+    }
+  }, [theme, stats.wins]);
+
+  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
+    const saved = readStored('memoryGameAchievements', () => []);
+    const previousStats = readStored('memoryGameStats', defaultStats);
+    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
+      wins: previousStats.wins || 0,
+      hardWins: previousStats.winsByLevel?.hard || 0,
+      level: null,
+      moves: null,
+    });
+  });
+
+  // Award milestones from existing statistics, even before the next game.
+  useEffect(() => {
+    localStorage.setItem('memoryGameAchievements', JSON.stringify(unlockedAchievements));
+  }, [unlockedAchievements]);
+
   // Hydrate from VK Storage before allowing any cloud writes.
   const [cloudReady, setCloudReady] = useState(false);
   const [cloudEnabled, setCloudEnabled] = useState(false);
@@ -83,30 +107,6 @@ export const Home = ({ id }) => {
     }, 900);
     return () => clearTimeout(timeout);
   }, [cloudReady, cloudEnabled, records, stats, unlockedAchievements, theme]);
-
-  // Previously selected themes stay saved, but locked themes cannot be used.
-  useEffect(() => {
-    if (!isThemeUnlocked(theme, stats.wins)) {
-      setTheme('amethyst');
-      localStorage.setItem(THEME_STORAGE_KEY, 'amethyst');
-    }
-  }, [theme, stats.wins]);
-
-  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
-    const saved = readStored('memoryGameAchievements', () => []);
-    const previousStats = readStored('memoryGameStats', defaultStats);
-    return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
-      wins: previousStats.wins || 0,
-      hardWins: previousStats.winsByLevel?.hard || 0,
-      level: null,
-      moves: null,
-    });
-  });
-
-  // Award milestones from existing statistics, even before the next game.
-  useEffect(() => {
-    localStorage.setItem('memoryGameAchievements', JSON.stringify(unlockedAchievements));
-  }, [unlockedAchievements]);
 
   const startGame = (selectedLevel = level) => {
     if (!cloudReady) return;
