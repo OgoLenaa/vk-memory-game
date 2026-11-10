@@ -191,6 +191,7 @@ export const Home = ({ id }) => {
         ) : (
           <GameBoard
             level={level}
+            theme={theme}
             cards={cards}
             selected={selected}
             matched={matched}
