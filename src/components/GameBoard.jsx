@@ -5,7 +5,7 @@ import { GameMenu } from './GameMenu';
 import { MemoryCard } from './MemoryCard';
 
 export const GameBoard = ({
-  level, cards, selected, matched, moves, elapsed, locked, paused, onPause, onResume, isWon,
+  level, cards, selected, matched, moves, elapsed, locked, paused, onPause, onResume, isWon, newAchievements,
   onCardClick, onRestart, onHome, soundEnabled, onToggleSound,
 }) => {
   return (
@@ -76,7 +76,7 @@ export const GameBoard = ({
       </div>
 
       {isWon && (
-        <WinScreen moves={moves} elapsed={elapsed} onHome={onHome} onRestart={onRestart} />
+        <WinScreen moves={moves} elapsed={elapsed} onHome={onHome} onRestart={onRestart} newAchievements={newAchievements} />
       )}
 
       {paused && (
