@@ -3,14 +3,20 @@ export const symbols = [
   '🍉', '⭐', '🦋', '🍒', '🐼', '🌸',
 ];
 
+export const themeSymbols = {
+  amethyst: symbols,
+  ocean: ['🐬', '🐙', '🦀', '🐠', '🐚', '🪼', '🦈', '🐳', '🦭', '🐢', '⚓', '🪸'],
+  sunset: ['☀️', '🌻', '🌴', '🍊', '🦋', '🌺', '🌵', '🍹', '🏜️', '🔥', '🌄', '🦜'],
+};
+
 export const levels = {
   easy: { name: 'Лёгкий', pairs: 4 },
   medium: { name: 'Средний', pairs: 8 },
   hard: { name: 'Сложный', pairs: 12 },
 };
 
-export const createCards = (level) => {
-  const selectedSymbols = symbols.slice(0, levels[level].pairs);
+export const createCards = (level, theme = 'amethyst') => {
+  const selectedSymbols = (themeSymbols[theme] || symbols).slice(0, levels[level].pairs);
   const shuffled = [...selectedSymbols, ...selectedSymbols];
 
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -30,6 +36,7 @@ export const formatTime = (seconds) => {
 export const defaultStats = () => ({
   games: 0,
   wins: 0,
+  winsByLevel: { easy: 0, medium: 0, hard: 0 },
   levels: { easy: 0, medium: 0, hard: 0 },
 });
 

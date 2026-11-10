@@ -3,16 +3,18 @@ import { levels, formatTime } from '../utils/memoryGame';
 import { WinScreen } from './WinScreen';
 import { GameMenu } from './GameMenu';
 import { MemoryCard } from './MemoryCard';
+import { themes } from '../utils/themes';
 
 export const GameBoard = ({
-  level, cards, selected, matched, moves, elapsed, locked, paused, onPause, onResume, isWon, newAchievements,
+  level, theme = 'amethyst', cards, selected, matched, moves, elapsed, locked, paused, onPause, onResume, isWon, newAchievements,
   onCardClick, onRestart, onHome, soundEnabled, onToggleSound,
 }) => {
+  const palette = themes[theme] || themes.amethyst;
   return (
     <div style={{ width: '100%', maxWidth: level === 'hard' ? 650 : 520, margin: '0 auto', padding: '4px 0 8px', boxSizing: 'border-box' }}>
-      <div style={{ padding: 'clamp(10px, 2vh, 18px)', borderRadius: 26, border: '1px solid #50406f', background: 'linear-gradient(145deg, #251d3d, #171226)', boxShadow: '0 16px 45px rgba(0,0,0,0.28)' }}>
+      <div style={{ padding: 'clamp(10px, 2vh, 18px)', borderRadius: 26, border: `1px solid ${palette.accent}`, background: palette.surface, boxShadow: '0 16px 45px rgba(0,0,0,0.28)' }}>
       <div style={{ textAlign: 'center', marginBottom: 8 }}>
-        <h2 style={{ margin: '0 0 6px', color: '#d8c7ff', fontSize: 'clamp(21px, 4vw, 28px)' }}>🧠 Найди все пары!</h2>
+        <h2 style={{ margin: '0 0 6px', color: palette.text, fontSize: 'clamp(21px, 4vw, 28px)' }}>🧠 Найди все пары!</h2>
         <div style={{ color: '#b9b1d0', fontSize: 14 }}>
           Уровень: {levels[level].name}
         </div>
@@ -42,7 +44,7 @@ export const GameBoard = ({
             style={{
               padding: '6px 4px',
               borderRadius: 15,
-              background: '#241e39',
+              background: palette.background,
               textAlign: 'center',
             }}
           >
@@ -78,6 +80,8 @@ export const GameBoard = ({
               isMatched={isMatched}
               disabled={isOpen || locked || paused}
               onClick={onCardClick}
+              palette={palette}
+              theme={theme}
             />
           );
         })}
@@ -86,11 +90,12 @@ export const GameBoard = ({
       </div>
 
       {isWon && (
-        <WinScreen moves={moves} elapsed={elapsed} onHome={onHome} onRestart={onRestart} newAchievements={newAchievements} />
+        <WinScreen palette={palette} moves={moves} elapsed={elapsed} onHome={onHome} onRestart={onRestart} newAchievements={newAchievements} />
       )}
 
       {paused && (
         <GameMenu
+          palette={palette}
           onClose={onResume}
           onHome={() => {
             onHome();

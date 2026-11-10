@@ -2,7 +2,7 @@ import { Button } from '@vkontakte/vkui';
 import { formatTime } from '../utils/memoryGame';
 import { achievements } from '../utils/achievements';
 
-export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements = [] }) => (
+export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements = [], palette }) => (
   <div
     role="presentation"
     style={{
@@ -28,15 +28,15 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
       overflowY: 'auto',
       boxSizing: 'border-box',
       padding: 25,
-      background: 'linear-gradient(145deg, #3d2d60, #29203f)',
-      border: '1px solid #8065b5',
+      background: palette?.surface || '#29203f',
+      border: `1px solid ${palette?.accent || '#8065b5'}`,
       borderRadius: 22,
       textAlign: 'center',
       boxShadow: '0 8px 25px rgba(0,0,0,0.25)',
     }}
   >
     <div style={{ fontSize: 55, marginBottom: 10 }}>🏆</div>
-    <h2 id="win-title" style={{ color: '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
+    <h2 id="win-title" style={{ color: palette?.text || '#d8c7ff', margin: '5px 0 10px' }}>Ты победила!</h2>
     <p style={{ color: '#c8bddf', marginBottom: 22 }}>
       Все пары найдены! Отличная работа!
     </p>
@@ -53,7 +53,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
         ['ХОДЫ', moves],
         ['ВРЕМЯ', formatTime(elapsed)],
       ].map(([label, value]) => (
-        <div key={label} style={{ background: '#241b38', padding: 15, borderRadius: 15 }}>
+        <div key={label} style={{ background: palette?.background || '#241b38', padding: 15, borderRadius: 15 }}>
           <div style={{ color: '#b9b1d0', fontSize: 12 }}>{label}</div>
           <div style={{ fontSize: 25, fontWeight: 800, color: '#ffffff' }}>{value}</div>
         </div>
@@ -61,7 +61,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
     </div>
 
     {newAchievements.length > 0 && (
-      <div style={{ marginBottom: 22, padding: 16, borderRadius: 16, background: '#463365', border: '1px solid #a78bfa' }} aria-live="polite">
+      <div style={{ marginBottom: 22, padding: 16, borderRadius: 16, background: palette?.surface || '#463365', border: `1px solid ${palette?.accent || '#a78bfa'}` }} aria-live="polite">
         <div style={{ fontWeight: 800, color: '#e7d9ff', marginBottom: 12 }}>Новое достижение!</div>
         {achievements.filter((item) => newAchievements.includes(item.id)).map((item) => (
           <div key={item.id} style={{ marginTop: 10 }}>
@@ -90,7 +90,7 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements =
           minWidth: 0,
           height: 52,
           borderRadius: 15,
-          background: '#8055d9',
+          background: palette?.accent || '#8055d9',
           fontWeight: 700,
         }}
       >

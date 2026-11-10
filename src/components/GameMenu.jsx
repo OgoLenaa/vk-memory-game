@@ -1,6 +1,6 @@
 import { Button } from '@vkontakte/vkui';
 
-export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
+export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound, palette }) => (
   <div
     onClick={onClose}
     style={{
@@ -21,8 +21,8 @@ export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
         maxWidth: 340,
         padding: 24,
         borderRadius: 22,
-        background: 'linear-gradient(145deg, #3d2d60, #241b38)',
-        border: '1px solid #65538f',
+        background: palette?.surface || '#241b38',
+        border: `1px solid ${palette?.accent || '#65538f'}`,
         boxShadow: '0 12px 35px rgba(0,0,0,0.4)',
       }}
     >
@@ -34,7 +34,7 @@ export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
           marginBottom: 22,
         }}
       >
-        <h2 style={{ color: '#d8c7ff', margin: 0 }}>Пауза</h2>
+        <h2 style={{ color: palette?.text || '#d8c7ff', margin: 0 }}>Пауза</h2>
         <button
           onClick={onClose}
           style={{
@@ -54,7 +54,7 @@ export const GameMenu = ({ onClose, onHome, soundEnabled, onToggleSound }) => (
         size="l"
         mode="primary"
         onClick={onClose}
-        style={{ marginBottom: 14 }}
+        style={{ marginBottom: 14, background: palette?.accent || '#8055d9' }}
       >
         ▶ Продолжить игру
       </Button>

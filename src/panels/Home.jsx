@@ -5,15 +5,22 @@ import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
 import { playSound } from '../utils/sounds';
 import { earnedAchievements } from '../utils/achievements';
+import { themes, readTheme, THEME_STORAGE_KEY, isThemeUnlocked } from '../utils/themes';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
   const [started, setStarted] = useState(false);
   const [level, setLevel] = useState('medium');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [theme, setTheme] = useState(readTheme);
+  const selectTheme = (nextTheme) => {
+    if (!isThemeUnlocked(nextTheme, stats.wins)) return;
+    setTheme(nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  };
 
   // Current game
-  const [cards, setCards] = useState(() => createCards('medium'));
+  const [cards, setCards] = useState(() => createCards('medium', readTheme()));
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -34,11 +41,20 @@ export const Home = ({ id }) => {
     readStored('memoryGameStats', defaultStats)
   );
 
+  // Previously selected themes stay saved, but locked themes cannot be used.
+  useEffect(() => {
+    if (!isThemeUnlocked(theme, stats.wins)) {
+      setTheme('amethyst');
+      localStorage.setItem(THEME_STORAGE_KEY, 'amethyst');
+    }
+  }, [theme, stats.wins]);
+
   const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
     const saved = readStored('memoryGameAchievements', () => []);
     const previousStats = readStored('memoryGameStats', defaultStats);
     return earnedAchievements((Array.isArray(saved) ? saved : []).filter((id) => id !== 'test_reward' && id !== 'test_reward_2'), {
       wins: previousStats.wins || 0,
+      hardWins: previousStats.winsByLevel?.hard || 0,
       level: null,
       moves: null,
     });
@@ -52,7 +68,7 @@ export const Home = ({ id }) => {
   const startGame = (selectedLevel = level) => {
     clearTimeout(achievementSoundTimer.current);
     setLevel(selectedLevel);
-    setCards(createCards(selectedLevel));
+    setCards(createCards(selectedLevel, theme));
     setSelected([]);
     setMatched([]);
     setMoves(0);
@@ -124,12 +140,22 @@ export const Home = ({ id }) => {
       localStorage.setItem('memoryGameRecords', JSON.stringify(updatedRecords));
     }
 
-    const updatedStats = { ...stats, wins: stats.wins + 1 };
+    const updatedStats = {
+      ...stats,
+      wins: stats.wins + 1,
+      winsByLevel: {
+        easy: stats.winsByLevel?.easy || 0,
+        medium: stats.winsByLevel?.medium || 0,
+        hard: stats.winsByLevel?.hard || 0,
+        [level]: (stats.winsByLevel?.[level] || 0) + 1,
+      },
+    };
     setStats(updatedStats);
     localStorage.setItem('memoryGameStats', JSON.stringify(updatedStats));
 
     const nextAchievements = earnedAchievements(unlockedAchievements, {
       wins: updatedStats.wins,
+      hardWins: updatedStats.winsByLevel.hard,
       level,
       moves,
     });
@@ -165,7 +191,7 @@ export const Home = ({ id }) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: 'linear-gradient(160deg, #171329, #0e0b19)',
+          background: themes[theme].background,
           color: '#ffffff',
           boxSizing: 'border-box',
         }}
@@ -178,10 +204,13 @@ export const Home = ({ id }) => {
             records={records}
             stats={stats}
             unlockedAchievements={unlockedAchievements}
+            theme={theme}
+            onSelectTheme={selectTheme}
           />
         ) : (
           <GameBoard
             level={level}
+            theme={theme}
             cards={cards}
             selected={selected}
             matched={matched}
