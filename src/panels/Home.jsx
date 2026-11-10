@@ -5,7 +5,7 @@ import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
 import { playSound } from '../utils/sounds';
 import { earnedAchievements } from '../utils/achievements';
-import { themes, readTheme, THEME_STORAGE_KEY } from '../utils/themes';
+import { themes, readTheme, THEME_STORAGE_KEY, isThemeUnlocked } from '../utils/themes';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
@@ -14,7 +14,7 @@ export const Home = ({ id }) => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [theme, setTheme] = useState(readTheme);
   const selectTheme = (nextTheme) => {
-    if (!themes[nextTheme]) return;
+    if (!isThemeUnlocked(nextTheme, stats.wins)) return;
     setTheme(nextTheme);
     localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
   };
@@ -40,6 +40,14 @@ export const Home = ({ id }) => {
   const [stats, setStats] = useState(() =>
     readStored('memoryGameStats', defaultStats)
   );
+
+  // Previously selected themes stay saved, but locked themes cannot be used.
+  useEffect(() => {
+    if (!isThemeUnlocked(theme, stats.wins)) {
+      setTheme('amethyst');
+      localStorage.setItem(THEME_STORAGE_KEY, 'amethyst');
+    }
+  }, [theme, stats.wins]);
 
   const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
     const saved = readStored('memoryGameAchievements', () => []);
