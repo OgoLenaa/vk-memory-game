@@ -60,7 +60,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
       {section && (
         <div style={panelStyle}>
           <div role="dialog" aria-modal="true" aria-labelledby="menu-section-title" style={{ ...contentStyle, background: palette.surface, borderColor: palette.accent }}>
-            <div style={{ position: 'sticky', top: -24, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 44, marginBottom: 20, padding: '8px 44px', background: palette.surface, borderRadius: 12 }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 44, marginBottom: 20, padding: '8px 44px', background: palette.surface, borderRadius: 12 }}>
               <h2 id="menu-section-title" style={{ color: palette.text, margin: 0, textAlign: 'center' }}>
               {section === 'play' ? 'Выбери сложность' : section === 'records' ? '🏆 Мои рекорды' : section === 'stats' ? '📊 Моя статистика' : section === 'themes' ? '🎨 Темы оформления' : '🎖️ Мои достижения'}
               </h2>
@@ -110,7 +110,7 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlocke
                 <h3 style={{ marginBottom: 8 }}>Игры и победы по уровням</h3>
                 {Object.entries(levels).map(([key, item]) => (
                   <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-                    <span>{item.name}</span><strong>{stats.levels[key] || 0} игр · {stats.winsByLevel?.[key] || 0} побед</strong>
+                    <span>{item.name}</span><strong>Игры: {stats.levels[key] || 0} · Победы: {stats.winsByLevel?.[key] || 0}</strong>
                   </div>
                 ))}
               </>
