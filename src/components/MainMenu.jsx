@@ -1,7 +1,8 @@
 import { Button } from '@vkontakte/vkui';
 import { levels, formatTime } from '../utils/memoryGame';
+import { achievements } from '../utils/achievements';
 
-export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats }) => (
+export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats, unlockedAchievements }) => (
   <div style={{ textAlign: 'center', paddingTop: 35, maxWidth: 420, margin: '0 auto' }}>
     <div style={{ fontSize: 70, marginBottom: 15 }}>🧠</div>
     <h1 style={{ color: '#c4b5fd' }}>Найди пару</h1>
@@ -102,6 +103,41 @@ export const MainMenu = ({ level, onSelectLevel, onPlay, records, stats }) => (
             <strong>{stats.levels[key] || 0}</strong>
           </div>
         ))}
+      </div>
+    </div>
+
+    <div style={{ marginTop: 18, padding: 18, borderRadius: 16, background: '#241e39' }}>
+      <h3 style={{ color: '#c4b5fd', marginTop: 0 }}>🎖️ Мои достижения</h3>
+      <p style={{ color: '#b9b1d0', fontSize: 13 }}>
+        Открыто {unlockedAchievements.length} из {achievements.length}
+      </p>
+      <div style={{ display: 'grid', gap: 10, textAlign: 'left' }}>
+        {achievements.map((item) => {
+          const unlocked = unlockedAchievements.includes(item.id);
+          return (
+            <div
+              key={item.id}
+              style={{
+                display: 'flex',
+                gap: 12,
+                alignItems: 'center',
+                padding: 12,
+                borderRadius: 12,
+                background: unlocked ? '#403264' : '#1b172c',
+                border: unlocked ? '1px solid #8065b5' : '1px solid #3b3450',
+                opacity: unlocked ? 1 : 0.65,
+              }}
+            >
+              <span style={{ fontSize: 27 }}>{unlocked ? item.icon : '🔒'}</span>
+              <div>
+                <div style={{ fontWeight: 700 }}>{item.title}</div>
+                <div style={{ color: '#b9b1d0', fontSize: 12, marginTop: 4 }}>
+                  {item.description}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   </div>
