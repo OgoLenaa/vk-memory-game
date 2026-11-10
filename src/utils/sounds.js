@@ -6,6 +6,13 @@ const sounds = {
 };
 
 export const playSound = (type) => {
+  if (type === 'achievement') {
+    const audio = new Audio(`${import.meta.env.BASE_URL}sounds/achievement.wav`);
+    audio.volume = 0.65;
+    audio.play().catch(() => {});
+    return;
+  }
+
   const sound = sounds[type];
   if (!sound) return;
 
