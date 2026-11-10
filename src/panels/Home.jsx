@@ -6,6 +6,7 @@ import { createCards, defaultStats, levels, readStored } from '../utils/memoryGa
 import { playSound } from '../utils/sounds';
 import { earnedAchievements } from '../utils/achievements';
 import { themes, readTheme, THEME_STORAGE_KEY, isThemeUnlocked } from '../utils/themes';
+import { isVkStorageAvailable, loadCloudProgress, mergeProgress, readLocalProgress, saveCloudProgress, writeLocalProgress } from '../utils/cloudProgress';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
@@ -41,6 +42,48 @@ export const Home = ({ id }) => {
     readStored('memoryGameStats', defaultStats)
   );
 
+  // Hydrate from VK Storage before allowing any cloud writes.
+  const [cloudReady, setCloudReady] = useState(false);
+  const [cloudEnabled, setCloudEnabled] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const initialize = async () => {
+      if (!isVkStorageAvailable()) {
+        if (!cancelled) setCloudReady(true);
+        return;
+      }
+      try {
+        const remote = await loadCloudProgress();
+        if (cancelled) return;
+        const merged = mergeProgress(readLocalProgress(), remote);
+        writeLocalProgress(merged);
+        setRecords(merged.records);
+        setStats(merged.stats);
+        setUnlockedAchievements(merged.achievements);
+        setTheme(merged.theme);
+        setCloudEnabled(true);
+      } catch (error) {
+        console.warn('VK Storage недоступен; прогресс остаётся на устройстве:', error);
+      } finally {
+        if (!cancelled) setCloudReady(true);
+      }
+    };
+    initialize();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Debounce writes and cancel stale snapshots on each state change.
+  useEffect(() => {
+    if (!cloudReady || !cloudEnabled) return;
+    const snapshot = { records, stats, achievements: unlockedAchievements, theme };
+    const timeout = setTimeout(() => {
+      saveCloudProgress(snapshot).catch((error) => {
+        console.warn('Не удалось сохранить прогресс в VK Storage:', error);
+      });
+    }, 900);
+    return () => clearTimeout(timeout);
+  }, [cloudReady, cloudEnabled, records, stats, unlockedAchievements, theme]);
+
   // Previously selected themes stay saved, but locked themes cannot be used.
   useEffect(() => {
     if (!isThemeUnlocked(theme, stats.wins)) {
@@ -66,6 +109,7 @@ export const Home = ({ id }) => {
   }, [unlockedAchievements]);
 
   const startGame = (selectedLevel = level) => {
+    if (!cloudReady) return;
     clearTimeout(achievementSoundTimer.current);
     setLevel(selectedLevel);
     setCards(createCards(selectedLevel, theme));
@@ -196,7 +240,9 @@ export const Home = ({ id }) => {
           boxSizing: 'border-box',
         }}
       >
-        {!started ? (
+        {!cloudReady ? (
+          <div style={{ textAlign: 'center', color: '#d8c7ff' }}>Загружаем прогресс...</div>
+        ) : !started ? (
           <MainMenu
             level={level}
             onSelectLevel={setLevel}
