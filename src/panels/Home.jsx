@@ -4,6 +4,7 @@ import { MainMenu } from '../components/MainMenu';
 import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
 import { playSound } from '../utils/sounds';
+import { earnedAchievements } from '../utils/achievements';
 
 export const Home = ({ id }) => {
   // Navigation and player preferences
@@ -27,6 +28,10 @@ export const Home = ({ id }) => {
   );
   const [stats, setStats] = useState(() =>
     readStored('memoryGameStats', defaultStats)
+  );
+
+  const [unlockedAchievements, setUnlockedAchievements] = useState(() =>
+    readStored('memoryGameAchievements', () => [])
   );
 
   const startGame = (selectedLevel = level) => {
@@ -105,6 +110,14 @@ export const Home = ({ id }) => {
     const updatedStats = { ...stats, wins: stats.wins + 1 };
     setStats(updatedStats);
     localStorage.setItem('memoryGameStats', JSON.stringify(updatedStats));
+
+    const nextAchievements = earnedAchievements(unlockedAchievements, {
+      wins: updatedStats.wins,
+      level,
+      moves,
+    });
+    setUnlockedAchievements(nextAchievements);
+    localStorage.setItem('memoryGameAchievements', JSON.stringify(nextAchievements));
   }, [isWon]);
 
   // Timer starts only after the first card flip
@@ -137,6 +150,7 @@ export const Home = ({ id }) => {
             onPlay={() => startGame()}
             records={records}
             stats={stats}
+            unlockedAchievements={unlockedAchievements}
           />
         ) : (
           <GameBoard
