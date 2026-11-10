@@ -1,7 +1,8 @@
 import { Button } from '@vkontakte/vkui';
 import { formatTime } from '../utils/memoryGame';
+import { achievements } from '../utils/achievements';
 
-export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
+export const WinScreen = ({ moves, elapsed, onHome, onRestart, newAchievements = [] }) => (
   <div
     style={{
       marginTop: 25,
@@ -37,6 +38,19 @@ export const WinScreen = ({ moves, elapsed, onHome, onRestart }) => (
         </div>
       ))}
     </div>
+
+    {newAchievements.length > 0 && (
+      <div style={{ marginBottom: 22, padding: 16, borderRadius: 16, background: '#463365', border: '1px solid #a78bfa' }} aria-live="polite">
+        <div style={{ fontWeight: 800, color: '#e7d9ff', marginBottom: 12 }}>Новое достижение!</div>
+        {achievements.filter((item) => newAchievements.includes(item.id)).map((item) => (
+          <div key={item.id} style={{ marginTop: 10 }}>
+            <div style={{ fontSize: 32 }}>{item.icon}</div>
+            <div style={{ fontWeight: 700, color: '#fff' }}>{item.title}</div>
+            <div style={{ color: '#c8bddf', fontSize: 13 }}>{item.description}</div>
+          </div>
+        ))}
+      </div>
+    )}
 
     <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
       <Button
