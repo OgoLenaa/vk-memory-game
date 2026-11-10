@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Panel, PanelHeader } from '@vkontakte/vkui';
+import { Panel } from '@vkontakte/vkui';
 import { MainMenu } from '../components/MainMenu';
 import { GameBoard } from '../components/GameBoard';
 import { createCards, defaultStats, levels, readStored } from '../utils/memoryGame';
@@ -158,11 +158,13 @@ export const Home = ({ id }) => {
 
   return (
     <Panel id={id}>
-      <PanelHeader>Найди пару</PanelHeader>
       <div
         style={{
-          minHeight: '85vh',
-          padding: '24px 16px',
+          minHeight: '100dvh',
+          padding: 'clamp(10px, 2vh, 20px) 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           background: 'linear-gradient(160deg, #171329, #0e0b19)',
           color: '#ffffff',
           boxSizing: 'border-box',
